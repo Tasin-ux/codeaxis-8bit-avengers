@@ -14,6 +14,11 @@ export interface RegisterPayload {
   password: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
 export interface TokenResponse {
   access_token: string;
   refresh_token: string;
@@ -26,9 +31,18 @@ export const authApi = {
     return res.data;
   },
 
-  register: async (payload: RegisterPayload): Promise<User> => {
-    const res = await api.post<User>('/auth/register', payload);
+  register: async (payload: RegisterPayload): Promise<RegisterResponse> => {
+    const res = await api.post<RegisterResponse>('/auth/register', payload);
     return res.data;
+  },
+
+  verifyOtp: async (email: string, code: string): Promise<TokenResponse> => {
+    const res = await api.post<TokenResponse>('/auth/verify-otp', { email, code });
+    return res.data;
+  },
+
+  resendOtp: async (email: string, purpose: 'register' | 'forgot_password' = 'register'): Promise<void> => {
+    await api.post('/auth/resend-otp', { email, purpose });
   },
 
   getMe: async (): Promise<User> => {

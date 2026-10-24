@@ -15,7 +15,9 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { email: string; username: string; full_name: string; password: string }) => Promise<void>;
+  register: (data: { email: string; username: string; full_name: string; password: string }) => Promise<string>;
+  verifyOtp: (email: string, code: string) => Promise<void>;
+  resendOtp: (email: string, purpose?: 'register' | 'forgot_password') => Promise<void>;
   logout: () => void;
   setCurrentWorkspace: (ws: Workspace) => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -104,12 +106,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: { email: string; username: string; full_name: string; password: string }) => {
     setLoading(true);
     try {
-      await authApi.register(data);
-      // Auto-login after successful registration
-      await login(data.email, data.password);
+      const res = await authApi.register(data);
+      // The account stays inactive until the emailed OTP is verified —
+      // the caller must collect the code and call verifyOtp.
+      return res.email;
     } finally {
       setLoading(false);
     }
+  };
+
+  const verifyOtp = async (email: string, code: string) => {
+    setLoading(true);
+    try {
+      const res = await authApi.verifyOtp(email, code);
+      localStorage.setItem('access_token', res.access_token);
+      localStorage.setItem('refresh_token', res.refresh_token);
+      setToken(res.access_token);
+      const me = await authApi.getMe();
+      setUser(me);
+      await loadWorkspaces(me);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOtp = async (email: string, purpose: 'register' | 'forgot_password' = 'register') => {
+    await authApi.resendOtp(email, purpose);
   };
 
   const logout = () => {
@@ -146,6 +168,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         login,
         register,
+        verifyOtp,
+        resendOtp,
         logout,
         setCurrentWorkspace,
         refreshUser,
