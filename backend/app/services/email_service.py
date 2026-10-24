@@ -1,6 +1,7 @@
 """Email sending via SMTP or Resend API (httpx). Falls back to console/outbox in dev."""
 
 import logging
+import re
 import smtplib
 from email.message import EmailMessage
 
@@ -65,9 +66,48 @@ def _send_smtp(message: dict) -> None:
         server.send_message(msg)
 
 
+def _parse_from(raw: str, fallback_email: str) -> dict:
+    """Split 'Name <email>' (or bare address) into Brevo sender dict."""
+    m = re.match(r"^(.*?)\s*<([^>]+)>$", (raw or "").strip())
+    if m:
+        return {"name": m.group(1).strip() or "BrandGuard", "email": m.group(2).strip()}
+    if (raw or "").strip():
+        return {"name": "BrandGuard", "email": raw.strip()}
+    return {"name": "BrandGuard", "email": fallback_email}
+
+
+def _send_brevo(message: dict) -> bool:
+    """Send via Brevo transactional API (port 443 – allowed on Render free tier)."""
+    payload = {
+        "sender": _parse_from(settings.EMAIL_FROM, settings.SMTP_USER),
+        "to": [{"email": message["to"]}],
+        "subject": message["subject"],
+        "textContent": message["text"],
+        "htmlContent": message["html"],
+    }
+    try:
+        resp = httpx.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={"accept": "application/json", "api-key": settings.BREVO_API_KEY},
+            json=payload,
+            timeout=15.0,
+        )
+        if resp.status_code >= 400:
+            logger.error("Brevo API error %s: %s", resp.status_code, resp.text)
+            return False
+        return True
+    except httpx.HTTPError as exc:
+        logger.error("Brevo request failed: %s", exc)
+        return False
+
+
 def send_otp_email(email: str, code: str, purpose: str) -> bool:
-    """Send an OTP email via SMTP or Resend. In dev (no config), capture to outbox + log."""
+    """Send an OTP email via Brevo API, SMTP, or Resend. Falls back to outbox in dev."""
     message = _build_email(email, code, purpose)
+
+    if settings.BREVO_API_KEY:
+        if _send_brevo(message):
+            return True
 
     if settings.SMTP_HOST:
         try:
@@ -75,32 +115,32 @@ def send_otp_email(email: str, code: str, purpose: str) -> bool:
             return True
         except (smtplib.SMTPException, OSError) as exc:
             logger.error("SMTP send to %s failed: %s", email, exc)
-            return False
 
-    if not settings.RESEND_API_KEY:
+    if settings.RESEND_API_KEY:
+        try:
+            resp = httpx.post(
+                "https://api.resend.com/emails",
+                headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
+                json={
+                    "from": settings.EMAIL_FROM or "BrandGuard <onboarding@resend.dev>",
+                    "to": [email],
+                    "subject": message["subject"],
+                    "text": message["text"],
+                    "html": message["html"],
+                },
+                timeout=15.0,
+            )
+            if resp.status_code < 400:
+                return True
+            logger.error("Resend API error %s: %s", resp.status_code, resp.text)
+        except httpx.HTTPError as exc:
+            logger.error("Failed to send email via Resend: %s", exc)
+
+    if not settings.BREVO_API_KEY and not settings.SMTP_HOST and not settings.RESEND_API_KEY:
+        # Dev/test outbox: no provider configured, capture instead of failing
         outbox.append({**message, "purpose": purpose})
-        # Log the code so operators can debug locally / on misconfigured deploys
-        logger.warning("RESEND_API_KEY not set – OTP for %s (%s): %s", email, purpose, code)
+        logger.warning("No email provider configured – OTP for %s (%s): %s", email, purpose, code)
         print(f"[DEV-OTP] {purpose} -> {email}: {code}")
         return True
 
-    try:
-        resp = httpx.post(
-            "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
-            json={
-                "from": settings.EMAIL_FROM or "BrandGuard <onboarding@resend.dev>",
-                "to": [email],
-                "subject": message["subject"],
-                "text": message["text"],
-                "html": message["html"],
-            },
-            timeout=15.0,
-        )
-        if resp.status_code >= 400:
-            logger.error("Resend API error %s: %s", resp.status_code, resp.text)
-            return False
-        return True
-    except httpx.HTTPError as exc:
-        logger.error("Failed to send email via Resend: %s", exc)
-        return False
+    return False
