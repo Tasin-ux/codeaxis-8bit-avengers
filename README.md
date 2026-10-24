@@ -49,9 +49,12 @@ The app is deployed end-to-end — no setup needed:
 | 👑 Administrator | `admin@brandguard.ai` | `Demo123!@#` |
 | ✍️ Content Creator | `creator@brandguard.ai` | `Demo123!@#` |
 
-> **Note on sign-ups:** new accounts must verify a 6-digit email code. During demo
-> the email sender (`onboarding@resend.dev`) has no verified domain, so OTP codes are
-> only delivered to the workspace owner's inbox — use a seeded demo account instead.
+> **Note on sign-ups:** new accounts must verify a 6-digit email code. Configure
+> `SMTP_HOST`/`SMTP_USER`/`SMTP_PASSWORD` in `backend/.env` (e.g. a Gmail app
+> password — see `.env.example`) to deliver codes to any address. With no SMTP or
+> `RESEND_API_KEY` set, codes only go to the dev outbox/console, and Resend test
+> mode (`onboarding@resend.dev`) only delivers to the workspace owner's inbox —
+> in that case use a seeded demo account instead.
 
 ---
 

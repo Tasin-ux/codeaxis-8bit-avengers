@@ -1,6 +1,8 @@
-"""Email sending via Resend API (httpx). Falls back to console/outbox in dev."""
+"""Email sending via SMTP or Resend API (httpx). Falls back to console/outbox in dev."""
 
 import logging
+import smtplib
+from email.message import EmailMessage
 
 import httpx
 
@@ -43,9 +45,37 @@ def _build_email(email: str, code: str, purpose: str) -> dict:
     return {"to": email, "subject": tpl["subject"], "text": text, "html": html}
 
 
+def _send_smtp(message: dict) -> None:
+    """Send via configured SMTP relay (e.g. Gmail app password)."""
+    msg = EmailMessage()
+    msg["From"] = settings.EMAIL_FROM or settings.SMTP_USER
+    msg["To"] = message["to"]
+    msg["Subject"] = message["subject"]
+    msg.set_content(message["text"])
+    msg.add_alternative(message["html"], subtype="html")
+    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as server:
+        server.ehlo()
+        try:
+            server.starttls()
+            server.ehlo()
+        except smtplib.SMTPNotSupportedError:
+            pass
+        if settings.SMTP_USER:
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+        server.send_message(msg)
+
+
 def send_otp_email(email: str, code: str, purpose: str) -> bool:
-    """Send an OTP email via Resend. In dev (no API key), capture to outbox + log."""
+    """Send an OTP email via SMTP or Resend. In dev (no config), capture to outbox + log."""
     message = _build_email(email, code, purpose)
+
+    if settings.SMTP_HOST:
+        try:
+            _send_smtp(message)
+            return True
+        except (smtplib.SMTPException, OSError) as exc:
+            logger.error("SMTP send to %s failed: %s", email, exc)
+            return False
 
     if not settings.RESEND_API_KEY:
         outbox.append({**message, "purpose": purpose})
@@ -59,7 +89,7 @@ def send_otp_email(email: str, code: str, purpose: str) -> bool:
             "https://api.resend.com/emails",
             headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
             json={
-                "from": settings.EMAIL_FROM,
+                "from": settings.EMAIL_FROM or "BrandGuard <onboarding@resend.dev>",
                 "to": [email],
                 "subject": message["subject"],
                 "text": message["text"],

@@ -24,8 +24,16 @@ class Settings(BaseSettings):
     AI_MODEL: str = ""
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
     ENVIRONMENT: str = "development"
+    # Email delivery: SMTP is checked first, then Resend, then dev outbox.
+    # SMTP example (Gmail app password, no domain needed):
+    #   SMTP_HOST=smtp.gmail.com  SMTP_PORT=587
+    #   SMTP_USER=you@gmail.com   SMTP_PASSWORD=<16-char app password>
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
     RESEND_API_KEY: str = ""
-    EMAIL_FROM: str = "BrandGuard <onboarding@resend.dev>"
+    EMAIL_FROM: str = ""
     OTP_EXPIRE_MINUTES: int = 10
     OTP_MAX_ATTEMPTS: int = 5
     OTP_RESEND_COOLDOWN_SECONDS: int = 60
