@@ -37,8 +37,8 @@ export const WorkspaceSetupPage: React.FC = () => {
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-slate-900 mb-2">Create Your Workspace</h3>
-      <p className="text-sm text-slate-500 mb-6">
+      <h3 className="text-xl font-bold text-stone-900 mb-2">Create Your Workspace</h3>
+      <p className="text-sm text-stone-500 mb-6">
         Set up a workspace for your brand guidelines, terminology, and content checks.
       </p>
 

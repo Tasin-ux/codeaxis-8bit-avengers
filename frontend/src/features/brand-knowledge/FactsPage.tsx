@@ -12,6 +12,7 @@ import { Badge } from '../../components/ui/Badge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2, Edit2, CheckCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 
 export const FactsPage: React.FC = () => {
@@ -34,6 +35,7 @@ export const FactsPage: React.FC = () => {
   const [productOrCampaign, setProductOrCampaign] = useState('');
 
   const canManage = membership?.role === 'admin' || membership?.role === 'manager';
+  const { ask, dialog } = useConfirm();
 
   const loadFacts = async () => {
     if (!currentWorkspace) {
@@ -116,7 +118,12 @@ export const FactsPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this approved fact?')) return;
+    const ok = await ask({
+      title: 'Delete approved fact?',
+      message: 'This permanently removes the fact and its source record from this workspace.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await factsApi.delete(id);
       await loadFacts();
@@ -143,10 +150,10 @@ export const FactsPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
             Approved Product Facts
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-stone-500 mt-1">
             Auditable knowledge base of verified product claims, SLAs, certifications, and sources.
           </p>
         </div>
@@ -162,7 +169,7 @@ export const FactsPage: React.FC = () => {
       {facts.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<CheckCircle className="w-8 h-8 text-slate-400" />}
+            icon={<CheckCircle className="w-8 h-8 text-stone-400" />}
             title="No approved facts configured"
             description="Add auditable factual claims to support content verification."
             actionLabel={canManage ? 'Add Approved Fact' : undefined}
@@ -176,25 +183,25 @@ export const FactsPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 capitalize">
+                    <ShieldCheck className="w-4 h-4 text-teal-600" />
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 capitalize">
                       {f.source_type.replace('_', ' ')}
                     </span>
                   </div>
                   {getStatusBadge(f.verification_status)}
                 </div>
 
-                <h3 className="text-base font-semibold text-slate-900 mb-1">{f.title}</h3>
-                <p className="text-sm text-slate-700 mb-3">{f.statement}</p>
+                <h3 className="text-base font-semibold text-stone-900 mb-1">{f.title}</h3>
+                <p className="text-sm text-stone-700 mb-3">{f.statement}</p>
 
-                <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100 space-y-1">
+                <div className="text-xs text-stone-500 bg-stone-50 p-2.5 rounded-lg border border-stone-100 space-y-1">
                   <div>
-                    <span className="font-semibold text-slate-600">Source:</span>{' '}
+                    <span className="font-semibold text-stone-600">Source:</span>{' '}
                     {f.source_reference}
                   </div>
                   {f.product_or_campaign && (
                     <div>
-                      <span className="font-semibold text-slate-600">Scope:</span>{' '}
+                      <span className="font-semibold text-stone-600">Scope:</span>{' '}
                       {f.product_or_campaign}
                     </div>
                   )}
@@ -204,7 +211,7 @@ export const FactsPage: React.FC = () => {
                         href={f.source_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 font-medium"
+                        className="text-teal-600 hover:text-teal-700 inline-flex items-center gap-1 font-medium"
                       >
                         Source Link <ExternalLink className="w-3 h-3" />
                       </a>
@@ -214,7 +221,7 @@ export const FactsPage: React.FC = () => {
               </div>
 
               {canManage && (
-                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-stone-100">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -323,6 +330,7 @@ export const FactsPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

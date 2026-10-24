@@ -41,7 +41,7 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({ severity }) => {
     default:
       return (
         <Badge variant="gray" className="gap-1">
-          <Info className="w-3 h-3 text-slate-500" />
+          <Info className="w-3 h-3 text-stone-500" />
           Info
         </Badge>
       );

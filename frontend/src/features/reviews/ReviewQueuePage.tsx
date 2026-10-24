@@ -48,10 +48,10 @@ export const ReviewQueuePage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
           Manager Review Queue
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1">
           Submissions awaiting brand compliance inspection, feedback, or final approval.
         </p>
       </div>
@@ -76,18 +76,18 @@ export const ReviewQueuePage: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {submissions.map((sub) => (
-            <Card key={sub.id} className="hover:border-indigo-200 transition-all">
+            <Card key={sub.id} className="hover:border-teal-200 transition-all">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-slate-900">{sub.title}</h3>
+                    <h3 className="text-base font-bold text-stone-900">{sub.title}</h3>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">
                       In Review
                     </span>
-                    <span className="text-xs text-slate-400">Rev {sub.current_revision_number}</span>
+                    <span className="text-xs text-stone-400">Rev {sub.current_revision_number}</span>
                   </div>
-                  <p className="text-sm text-slate-600 line-clamp-2 max-w-2xl">{sub.content}</p>
-                  <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
+                  <p className="text-sm text-stone-600 line-clamp-2 max-w-2xl">{sub.content}</p>
+                  <div className="flex items-center gap-4 text-xs text-stone-400 pt-1">
                     <span className="capitalize">{sub.content_type.replace('_', ' ')}</span>
                     <span>•</span>
                     <span>Submitted {new Date(sub.updated_at || sub.created_at).toLocaleDateString()}</span>

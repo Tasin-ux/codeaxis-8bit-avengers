@@ -10,6 +10,7 @@ import { Select } from '../../components/ui/Select';
 import { Modal } from '../../components/ui/Modal';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2 } from 'lucide-react';
 
 export const WorkspaceSettingsPage: React.FC = () => {
@@ -30,6 +31,7 @@ export const WorkspaceSettingsPage: React.FC = () => {
   );
 
   const isAdmin = membership?.role === 'admin';
+  const { ask, dialog } = useConfirm();
 
   const loadData = async () => {
     if (!currentWorkspace) {
@@ -105,7 +107,14 @@ export const WorkspaceSettingsPage: React.FC = () => {
   };
 
   const handleRemoveMember = async (userId: string) => {
-    if (!currentWorkspace || !confirm('Remove this user from the workspace?')) return;
+    if (!currentWorkspace) return;
+    const ok = await ask({
+      title: 'Remove member?',
+      message:
+        'This removes their access to this workspace. Their submissions and reviews are kept.',
+      confirmLabel: 'Remove',
+    });
+    if (!ok) return;
     try {
       await workspacesApi.removeMember(currentWorkspace.id, userId);
       await loadData();
@@ -119,10 +128,10 @@ export const WorkspaceSettingsPage: React.FC = () => {
   return (
     <div className="max-w-4xl space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
           Workspace Settings &amp; Access Control
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1">
           Configure workspace identity, team roles, and governance permissions.
         </p>
       </div>
@@ -173,7 +182,7 @@ export const WorkspaceSettingsPage: React.FC = () => {
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <thead className="bg-stone-50 border-b border-stone-200 text-xs font-semibold text-stone-500 uppercase tracking-wider">
               <tr>
                 <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Role</th>
@@ -181,13 +190,13 @@ export const WorkspaceSettingsPage: React.FC = () => {
                 {isAdmin && <th className="py-3 px-4 text-right">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-stone-100">
               {members.map((m) => (
-                <tr key={m.id} className="hover:bg-slate-50/50">
-                  <td className="py-3 px-4 font-medium text-slate-900">
+                <tr key={m.id} className="hover:bg-stone-50/50">
+                  <td className="py-3 px-4 font-medium text-stone-900">
                     <div>
                       <p>{m.user?.full_name || 'Member'}</p>
-                      <p className="text-xs text-slate-400">{m.user?.email || m.user_id}</p>
+                      <p className="text-xs text-stone-400">{m.user?.email || m.user_id}</p>
                     </div>
                   </td>
                   <td className="py-3 px-4">
@@ -195,7 +204,7 @@ export const WorkspaceSettingsPage: React.FC = () => {
                       <select
                         value={m.role}
                         onChange={(e) => handleRoleChange(m.user_id, e.target.value)}
-                        className="text-xs border border-slate-300 rounded-md p-1 font-semibold text-slate-700 bg-white"
+                        className="text-xs border border-stone-300 rounded-md py-1.5 pl-2.5 pr-7 font-semibold text-stone-700 bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500/15 focus:border-teal-600"
                       >
                         <option value="admin">Administrator</option>
                         <option value="manager">Brand Manager</option>
@@ -203,12 +212,12 @@ export const WorkspaceSettingsPage: React.FC = () => {
                         <option value="external">External Contributor</option>
                       </select>
                     ) : (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 capitalize">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 capitalize">
                         {m.role}
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-xs text-slate-400">
+                  <td className="py-3 px-4 text-xs text-stone-400">
                     {new Date(m.joined_at).toLocaleDateString()}
                   </td>
                   {isAdmin && (
@@ -261,6 +270,7 @@ export const WorkspaceSettingsPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

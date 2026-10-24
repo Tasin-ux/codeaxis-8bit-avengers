@@ -18,7 +18,7 @@ export const BrandKnowledgePage: React.FC = () => {
         'Define core tone, style, and messaging standards across marketing and communications.',
       icon: BookOpen,
       to: '/brand-knowledge/guidelines',
-      color: 'bg-indigo-50 text-indigo-600',
+      color: 'bg-teal-50 text-teal-600',
     },
     {
       title: 'Approved Terminology',
@@ -57,10 +57,10 @@ export const BrandKnowledgePage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
           Brand Knowledge Base
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1">
           Manage the single source of truth for all brand voice, terminology, legal disclaimers,
           and auditable product facts.
         </p>
@@ -69,17 +69,17 @@ export const BrandKnowledgePage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sections.map((sec) => (
           <Link key={sec.title} to={sec.to} className="group">
-            <Card className="h-full hover:border-indigo-300 hover:shadow-md transition-all">
+            <Card className="h-full hover:border-teal-300 hover:shadow-md transition-all">
               <div className="flex items-start justify-between mb-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${sec.color}`}>
                   <sec.icon className="w-6 h-6" />
                 </div>
-                <div className="p-1 rounded-full text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all">
+                <div className="p-1 rounded-full text-stone-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all">
                   <ArrowRight className="w-5 h-5" />
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">{sec.title}</h3>
-              <p className="text-sm text-slate-500">{sec.description}</p>
+              <h3 className="text-lg font-bold text-stone-900 mb-1">{sec.title}</h3>
+              <p className="text-sm text-stone-500">{sec.description}</p>
             </Card>
           </Link>
         ))}

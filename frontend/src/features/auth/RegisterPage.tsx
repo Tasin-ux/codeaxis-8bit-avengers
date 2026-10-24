@@ -101,8 +101,10 @@ export const RegisterPage: React.FC = () => {
   if (step === 'otp') {
     return (
       <div>
-        <h3 className="text-xl font-bold text-slate-900 mb-2">Verify your email</h3>
-        <p className="text-sm text-slate-500 mb-6">
+        <h3 className="text-[1.35rem] font-semibold text-stone-900 tracking-tight mb-1.5">
+          Verify your email
+        </h3>
+        <p className="text-sm text-stone-500 mb-6">
           Enter the verification code we emailed to <span className="font-semibold">{email}</span>.
         </p>
 
@@ -135,12 +137,12 @@ export const RegisterPage: React.FC = () => {
           </Button>
         </form>
 
-        <div className="mt-6 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-6 flex items-center justify-between text-sm text-stone-600">
           <button
             type="button"
             onClick={handleResend}
             disabled={cooldown > 0 || loading}
-            className="font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400 disabled:cursor-not-allowed"
+            className="font-semibold text-teal-600 hover:text-teal-500 disabled:text-stone-400 disabled:cursor-not-allowed"
           >
             {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
           </button>
@@ -152,7 +154,7 @@ export const RegisterPage: React.FC = () => {
               setInfo(null);
               setOtp('');
             }}
-            className="font-semibold text-slate-500 hover:text-slate-700"
+            className="font-semibold text-stone-500 hover:text-stone-700"
           >
             ← Change details
           </button>
@@ -163,9 +165,11 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-slate-900 mb-2">Create an Account</h3>
-      <p className="text-sm text-slate-500 mb-6">
-        Get started with BrandGuard AI governance platform.
+      <h3 className="text-[1.35rem] font-semibold text-stone-900 tracking-tight mb-1.5">
+        Create your account
+      </h3>
+      <p className="text-sm text-stone-500 mb-6">
+        Set up your login details to get started.
       </p>
 
       {error && (
@@ -225,9 +229,9 @@ export const RegisterPage: React.FC = () => {
         </Button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-slate-600">
+      <div className="mt-6 text-center text-sm text-stone-600">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
+        <Link to="/login" className="font-semibold text-teal-600 hover:text-teal-500">
           Sign in
         </Link>
       </div>

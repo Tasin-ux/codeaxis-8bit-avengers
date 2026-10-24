@@ -12,6 +12,7 @@ import { SeverityBadge } from '../../components/ui/SeverityBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2, Edit2, BookOpen } from 'lucide-react';
 
 export const GuidelinesPage: React.FC = () => {
@@ -31,6 +32,7 @@ export const GuidelinesPage: React.FC = () => {
   );
 
   const canManage = membership?.role === 'admin' || membership?.role === 'manager';
+  const { ask, dialog } = useConfirm();
 
   const loadGuidelines = async () => {
     if (!currentWorkspace) {
@@ -101,7 +103,12 @@ export const GuidelinesPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this guideline?')) return;
+    const ok = await ask({
+      title: 'Delete guideline?',
+      message: 'This permanently removes the guideline from this workspace.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await guidelinesApi.delete(id);
       await loadGuidelines();
@@ -116,8 +123,8 @@ export const GuidelinesPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Brand Guidelines</h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">Brand Guidelines</h2>
+          <p className="text-sm text-stone-500 mt-1">
             Core qualitative and quantitative rules for brand tone, voice, and style.
           </p>
         </div>
@@ -133,7 +140,7 @@ export const GuidelinesPage: React.FC = () => {
       {guidelines.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<BookOpen className="w-8 h-8 text-slate-400" />}
+            icon={<BookOpen className="w-8 h-8 text-stone-400" />}
             title="No guidelines configured"
             description="Add brand voice and communication guidelines for this workspace."
             actionLabel={canManage ? 'Add Guideline' : undefined}
@@ -146,17 +153,17 @@ export const GuidelinesPage: React.FC = () => {
             <Card key={g.id} className="flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700">
                     {g.category}
                   </span>
                   <SeverityBadge severity={g.severity} />
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 mb-1">{g.title}</h3>
-                <p className="text-sm text-slate-600">{g.description}</p>
+                <h3 className="text-base font-semibold text-stone-900 mb-1">{g.title}</h3>
+                <p className="text-sm text-stone-600">{g.description}</p>
               </div>
 
               {canManage && (
-                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-stone-100">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -241,6 +248,7 @@ export const GuidelinesPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

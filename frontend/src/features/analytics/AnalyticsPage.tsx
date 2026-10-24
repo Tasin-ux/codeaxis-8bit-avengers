@@ -82,10 +82,10 @@ export const AnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
           Governance &amp; Compliance Analytics
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1">
           Historical compliance trends, violation breakdowns, and frequently triggered rules.
         </p>
       </div>
@@ -95,7 +95,7 @@ export const AnalyticsPage: React.FC = () => {
       {overview?.total_submissions === 0 ? (
         <Card>
           <EmptyState
-            icon={<BarChart3 className="w-8 h-8 text-slate-400" />}
+            icon={<BarChart3 className="w-8 h-8 text-stone-400" />}
             title="No analytics data available yet"
             description="Submit and review marketing content to populate compliance analytics."
           />
@@ -105,29 +105,29 @@ export const AnalyticsPage: React.FC = () => {
           {/* Summary KPIs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Total Submissions</p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">
+              <p className="text-xs font-semibold text-stone-500 uppercase">Total Submissions</p>
+              <h3 className="text-2xl font-bold text-stone-900 mt-1">
                 {overview?.total_submissions || 0}
               </h3>
             </Card>
 
             <Card>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Violations Detected</p>
+              <p className="text-xs font-semibold text-stone-500 uppercase">Violations Detected</p>
               <h3 className="text-2xl font-bold text-red-600 mt-1">
                 {overview?.total_findings || 0}
               </h3>
             </Card>
 
             <Card>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Resolved Issues</p>
+              <p className="text-xs font-semibold text-stone-500 uppercase">Resolved Issues</p>
               <h3 className="text-2xl font-bold text-emerald-600 mt-1">
                 {overview?.total_resolved_findings || 0}
               </h3>
             </Card>
 
             <Card>
-              <p className="text-xs font-semibold text-slate-500 uppercase">Active Brand Rules</p>
-              <h3 className="text-2xl font-bold text-indigo-600 mt-1">
+              <p className="text-xs font-semibold text-stone-500 uppercase">Active Brand Rules</p>
+              <h3 className="text-2xl font-bold text-teal-600 mt-1">
                 {ruleStats?.most_triggered.length || 0}
               </h3>
             </Card>
@@ -139,7 +139,7 @@ export const AnalyticsPage: React.FC = () => {
             <Card title="Findings by Category" subtitle="Distribution of detected compliance issues">
               <div className="h-64 mt-2">
                 {categoryData.length === 0 ? (
-                  <p className="text-sm text-slate-400 italic text-center py-20">
+                  <p className="text-sm text-stone-400 italic text-center py-20">
                     No findings recorded.
                   </p>
                 ) : (
@@ -148,7 +148,7 @@ export const AnalyticsPage: React.FC = () => {
                       <XAxis dataKey="name" fontSize={11} />
                       <YAxis allowDecimals={false} fontSize={11} />
                       <Tooltip />
-                      <Bar dataKey="count" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="count" fill="#0d9488" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
@@ -159,7 +159,7 @@ export const AnalyticsPage: React.FC = () => {
             <Card title="Findings by Severity" subtitle="Severity risk profile of detected findings">
               <div className="h-64 mt-2">
                 {severityData.length === 0 ? (
-                  <p className="text-sm text-slate-400 italic text-center py-20">
+                  <p className="text-sm text-stone-400 italic text-center py-20">
                     No findings recorded.
                   </p>
                 ) : (
@@ -193,29 +193,29 @@ export const AnalyticsPage: React.FC = () => {
             subtitle="Brand rules and prohibited phrases that authors question or trigger most often"
           >
             {ruleStats?.most_triggered.length === 0 ? (
-              <p className="text-sm text-slate-400 italic text-center py-8">
+              <p className="text-sm text-stone-400 italic text-center py-8">
                 No rule triggers logged yet.
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <thead className="bg-stone-50 border-b border-stone-200 text-xs font-semibold text-stone-500 uppercase tracking-wider">
                     <tr>
                       <th className="py-3 px-4">Rule Title / Trigger</th>
                       <th className="py-3 px-4">Rule Type</th>
                       <th className="py-3 px-4 text-right">Violations Logged</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-stone-100">
                     {ruleStats?.most_triggered.map((rule, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/50">
-                        <td className="py-3 px-4 font-semibold text-slate-900">
+                      <tr key={idx} className="hover:bg-stone-50/50">
+                        <td className="py-3 px-4 font-semibold text-stone-900">
                           {rule.title}
                         </td>
-                        <td className="py-3 px-4 text-xs capitalize text-slate-600">
+                        <td className="py-3 px-4 text-xs capitalize text-stone-600">
                           {rule.rule_type?.replace('_', ' ') || 'General Rule'}
                         </td>
-                        <td className="py-3 px-4 text-right font-bold text-indigo-600">
+                        <td className="py-3 px-4 text-right font-bold text-teal-600">
                           {rule.hit_count} hits
                         </td>
                       </tr>

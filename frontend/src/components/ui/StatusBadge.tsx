@@ -35,7 +35,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     default:
       return (
         <Badge variant="gray" className="gap-1">
-          <FileEdit className="w-3 h-3 text-slate-500" />
+          <FileEdit className="w-3 h-3 text-stone-500" />
           Draft
         </Badge>
       );

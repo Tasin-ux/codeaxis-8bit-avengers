@@ -1,9 +1,9 @@
 import React from 'react';
-import { clsx } from 'clsx';
 import { Loader2 } from 'lucide-react';
+import { cn } from '../../lib/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
+  variant?: 'primary' | 'secondary' | 'danger' | 'danger-ghost' | 'ghost' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   icon?: React.ReactNode;
@@ -19,26 +19,35 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
-
-  const variantStyles = {
-    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-sm',
-    secondary: 'bg-slate-100 text-slate-800 hover:bg-slate-200 focus:ring-slate-400',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
-    ghost: 'text-slate-600 hover:bg-slate-100 focus:ring-slate-400',
-    outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50 focus:ring-indigo-500',
+  const variants = {
+    primary:
+      'bg-ink text-white hover:bg-stone-800 focus-visible:ring-teal-500 shadow-xs',
+    secondary:
+      'bg-white text-stone-700 border border-stone-300 hover:bg-stone-50 focus-visible:ring-teal-500',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 shadow-xs',
+    'danger-ghost':
+      'text-red-600 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-400',
+    ghost: 'text-stone-600 hover:bg-stone-100 hover:text-stone-900 focus-visible:ring-stone-400',
+    outline:
+      'border border-stone-300 text-stone-700 bg-white hover:bg-stone-50 focus-visible:ring-teal-500',
   };
 
-  const sizeStyles = {
-    sm: 'text-xs px-2.5 py-1.5 gap-1.5',
-    md: 'text-sm px-4 py-2 gap-2',
-    lg: 'text-base px-5 py-2.5 gap-2.5',
+  const sizes = {
+    sm: 'text-xs px-2.5 py-1.5 gap-1.5 rounded-md',
+    md: 'text-sm px-4 py-2 gap-2 rounded-md',
+    lg: 'text-[15px] px-5 py-2.5 gap-2 rounded-md',
   };
 
   return (
     <button
-      className={clsx(baseStyles, variantStyles[variant], sizeStyles[size], className)}
+      className={cn(
+        'inline-flex items-center justify-center font-medium transition-colors select-none',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+        'disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer',
+        variants[variant],
+        sizes[size],
+        className
+      )}
       disabled={disabled || loading}
       {...props}
     >

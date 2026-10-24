@@ -1,5 +1,5 @@
 import React from 'react';
-import { clsx } from 'clsx';
+import { cn } from '../../lib/cn';
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -14,7 +14,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700 mb-1">
+          <label
+            htmlFor={inputId}
+            className="block text-[13px] font-medium text-stone-700 mb-1.5"
+          >
             {label}
           </label>
         )}
@@ -22,17 +25,20 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={inputId}
           rows={rows}
-          className={clsx(
-            'block w-full rounded-md border text-slate-900 bg-white sm:text-sm p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0',
+          className={cn(
+            'block w-full rounded-md border bg-white text-sm text-stone-900 placeholder:text-stone-400 p-3 transition-[border-color,box-shadow]',
+            'focus:outline-none focus:ring-4',
             error
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-              : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100',
+              ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
+              : 'border-stone-300 focus:border-teal-600 focus:ring-teal-500/15',
             className
           )}
           {...props}
         />
-        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-        {helperText && !error && <p className="mt-1 text-xs text-slate-500">{helperText}</p>}
+        {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+        {helperText && !error && (
+          <p className="mt-1.5 text-xs text-stone-500">{helperText}</p>
+        )}
       </div>
     );
   }

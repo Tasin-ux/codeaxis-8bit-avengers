@@ -15,6 +15,7 @@ import { SeverityBadge } from '../../components/ui/SeverityBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2, Edit2, Ban } from 'lucide-react';
 
 export const ProhibitedPhrasesPage: React.FC = () => {
@@ -34,6 +35,7 @@ export const ProhibitedPhrasesPage: React.FC = () => {
   const [wholeWord, setWholeWord] = useState(true);
 
   const canManage = membership?.role === 'admin' || membership?.role === 'manager';
+  const { ask, dialog } = useConfirm();
 
   const loadPhrases = async () => {
     if (!currentWorkspace) {
@@ -112,7 +114,12 @@ export const ProhibitedPhrasesPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this prohibited phrase rule?')) return;
+    const ok = await ask({
+      title: 'Delete prohibited phrase?',
+      message: 'This permanently removes the rule. Submissions will no longer be checked against it.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await prohibitedPhrasesApi.delete(id);
       await loadPhrases();
@@ -127,10 +134,10 @@ export const ProhibitedPhrasesPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
             Prohibited Phrases
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-stone-500 mt-1">
             Expressions strictly disallowed across content submissions due to legal, regulatory, or brand risks.
           </p>
         </div>
@@ -146,7 +153,7 @@ export const ProhibitedPhrasesPage: React.FC = () => {
       {phrases.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<Ban className="w-8 h-8 text-slate-400" />}
+            icon={<Ban className="w-8 h-8 text-stone-400" />}
             title="No prohibited phrases configured"
             description="Add phrases that must not appear in marketing copy."
             actionLabel={canManage ? 'Add Prohibited Phrase' : undefined}
@@ -157,7 +164,7 @@ export const ProhibitedPhrasesPage: React.FC = () => {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <thead className="bg-stone-50 border-b border-stone-200 text-xs font-semibold text-stone-500 uppercase tracking-wider">
                 <tr>
                   <th className="py-3 px-6">Prohibited Phrase</th>
                   <th className="py-3 px-6">Severity</th>
@@ -167,20 +174,20 @@ export const ProhibitedPhrasesPage: React.FC = () => {
                   {canManage && <th className="py-3 px-6 text-right">Actions</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-stone-100">
                 {phrases.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/50">
+                  <tr key={p.id} className="hover:bg-stone-50/50">
                     <td className="py-4 px-6 font-semibold text-red-600 font-mono text-xs">
                       &quot;{p.phrase}&quot;
                     </td>
                     <td className="py-4 px-6">
                       <SeverityBadge severity={p.severity} />
                     </td>
-                    <td className="py-4 px-6 text-slate-600 max-w-xs">{p.reason}</td>
+                    <td className="py-4 px-6 text-stone-600 max-w-xs">{p.reason}</td>
                     <td className="py-4 px-6 text-emerald-700 font-medium text-xs">
-                      {p.suggested_alternative || <span className="text-slate-400 italic">None</span>}
+                      {p.suggested_alternative || <span className="text-stone-400 italic">None</span>}
                     </td>
-                    <td className="py-4 px-6 text-slate-500 text-xs">
+                    <td className="py-4 px-6 text-stone-500 text-xs">
                       {p.whole_word ? 'Whole word' : 'Substrings'}
                       {p.case_sensitive && ', Case-sensitive'}
                     </td>
@@ -262,9 +269,9 @@ export const ProhibitedPhrasesPage: React.FC = () => {
                 id="pp_whole_word"
                 checked={wholeWord}
                 onChange={(e) => setWholeWord(e.target.checked)}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-stone-300 text-teal-600 focus:ring-teal-500"
               />
-              <label htmlFor="pp_whole_word" className="text-sm text-slate-700">
+              <label htmlFor="pp_whole_word" className="text-sm text-stone-700">
                 Match whole word only (avoids partial substrings)
               </label>
             </div>
@@ -275,9 +282,9 @@ export const ProhibitedPhrasesPage: React.FC = () => {
                 id="pp_case_sensitive"
                 checked={caseSensitive}
                 onChange={(e) => setCaseSensitive(e.target.checked)}
-                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-stone-300 text-teal-600 focus:ring-teal-500"
               />
-              <label htmlFor="pp_case_sensitive" className="text-sm text-slate-700">
+              <label htmlFor="pp_case_sensitive" className="text-sm text-stone-700">
                 Case sensitive matching
               </label>
             </div>
@@ -291,6 +298,7 @@ export const ProhibitedPhrasesPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

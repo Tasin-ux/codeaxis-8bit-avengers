@@ -11,6 +11,7 @@ import { SeverityBadge } from '../../components/ui/SeverityBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2, Edit2, FileWarning } from 'lucide-react';
 
 export const DisclaimersPage: React.FC = () => {
@@ -27,6 +28,7 @@ export const DisclaimersPage: React.FC = () => {
   const [severity, setSeverity] = useState('high');
 
   const canManage = membership?.role === 'admin' || membership?.role === 'manager';
+  const { ask, dialog } = useConfirm();
 
   const loadDisclaimers = async () => {
     if (!currentWorkspace) {
@@ -93,7 +95,12 @@ export const DisclaimersPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this required disclaimer rule?')) return;
+    const ok = await ask({
+      title: 'Delete disclaimer?',
+      message: 'This permanently removes the required disclaimer from this workspace.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await disclaimersApi.delete(id);
       await loadDisclaimers();
@@ -108,10 +115,10 @@ export const DisclaimersPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
             Required Disclaimers
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-stone-500 mt-1">
             Mandatory disclosures that must appear in submitted content based on category.
           </p>
         </div>
@@ -127,7 +134,7 @@ export const DisclaimersPage: React.FC = () => {
       {disclaimers.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<FileWarning className="w-8 h-8 text-slate-400" />}
+            icon={<FileWarning className="w-8 h-8 text-stone-400" />}
             title="No required disclaimers configured"
             description="Add legal or regulatory disclaimers required for specific content types."
             actionLabel={canManage ? 'Add Disclaimer' : undefined}
@@ -140,18 +147,18 @@ export const DisclaimersPage: React.FC = () => {
             <Card key={d.id} className="flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 capitalize">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 capitalize">
                     {d.content_category.replace('_', ' ')}
                   </span>
                   <SeverityBadge severity={d.severity} />
                 </div>
-                <p className="text-sm text-slate-800 font-medium italic bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2">
+                <p className="text-sm text-stone-800 font-medium italic bg-stone-50 p-3 rounded-lg border border-stone-100 mt-2">
                   &quot;{d.text}&quot;
                 </p>
               </div>
 
               {canManage && (
-                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-stone-100">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -229,6 +236,7 @@ export const DisclaimersPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

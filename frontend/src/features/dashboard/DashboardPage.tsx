@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { submissionsApi } from '../../api/submissions';
 import { analyticsApi } from '../../api/analytics';
@@ -9,16 +9,14 @@ import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
-import {
-  FileText,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  PlusCircle,
-  BookOpen,
-  ArrowRight,
-  ShieldAlert,
-} from 'lucide-react';
+import { Plus, ArrowUpRight } from 'lucide-react';
+
+const statusDot: Record<string, string> = {
+  in_review: 'bg-blue-500',
+  changes_requested: 'bg-amber-500',
+  approved: 'bg-emerald-500',
+  draft: 'bg-stone-400',
+};
 
 export const DashboardPage: React.FC = () => {
   const { currentWorkspace } = useAuth();
@@ -53,180 +51,174 @@ export const DashboardPage: React.FC = () => {
   }, [currentWorkspace]);
 
   if (loading) {
-    return <LoadingSpinner message="Loading workspace dashboard..." />;
+    return <LoadingSpinner message="Loading dashboard…" />;
   }
 
-  const inReviewCount =
-    overview?.submissions_by_status.find((s) => s.status === 'in_review')?.count || 0;
-  const approvedCount =
-    overview?.submissions_by_status.find((s) => s.status === 'approved')?.count || 0;
-  const changesCount =
-    overview?.submissions_by_status.find((s) => s.status === 'changes_requested')?.count || 0;
+  const countFor = (status: string) =>
+    overview?.submissions_by_status.find((s) => s.status === status)?.count || 0;
+
+  const stats = [
+    { label: 'Submissions', value: overview?.total_submissions || 0, dot: statusDot.draft },
+    { label: 'In review', value: countFor('in_review'), dot: statusDot.in_review },
+    {
+      label: 'Changes requested',
+      value: countFor('changes_requested'),
+      dot: statusDot.changes_requested,
+    },
+    { label: 'Approved', value: countFor('approved'), dot: statusDot.approved },
+  ];
+
+  const totalFindings = overview?.total_findings || 0;
+  const resolvedFindings = overview?.total_resolved_findings || 0;
+  const resolutionPct =
+    totalFindings > 0 ? Math.round((resolvedFindings / totalFindings) * 100) : 0;
 
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Governance Dashboard
+          <p className="text-2xs font-semibold uppercase tracking-[0.16em] text-teal-700 font-mono mb-1.5">
+            Overview
+          </p>
+          <h2 className="text-[1.6rem] font-semibold text-stone-900 tracking-tight leading-tight">
+            Dashboard
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Real-time brand compliance metrics and content review activity for{' '}
-            <span className="font-semibold text-slate-700">{currentWorkspace?.name}</span>
+          <p className="text-sm text-stone-500 mt-1">
+            Activity across <span className="font-medium text-stone-700">{currentWorkspace?.name}</span>
           </p>
         </div>
         <div className="flex gap-2">
-          <Link to="/submissions/new">
-            <Button icon={<PlusCircle className="w-4 h-4" />}>New Submission</Button>
-          </Link>
-          <Link to="/brand-knowledge">
-            <Button variant="outline" icon={<BookOpen className="w-4 h-4" />}>
-              Brand Rules
-            </Button>
-          </Link>
+          <Button variant="outline" onClick={() => navigate('/brand-knowledge')}>
+            Brand rules
+          </Button>
+          <Button icon={<Plus className="w-4 h-4" />} onClick={() => navigate('/submissions/new')}>
+            New submission
+          </Button>
         </div>
       </div>
 
-      {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <Card className="border-l-4 border-l-indigo-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Total Drafts
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">
-                {overview?.total_submissions || 0}
-              </h3>
+      {/* Stat strip */}
+      <Card className="p-0" bodyClassName="p-0">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-stone-200 divide-x-0 lg:divide-x [&>*]:p-5">
+          {stats.map((s) => (
+            <div key={s.label}>
+              <div className="flex items-center gap-2">
+                <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                <span className="text-[11px] font-medium uppercase tracking-wider text-stone-500">
+                  {s.label}
+                </span>
+              </div>
+              <div className="mt-2 text-[1.75rem] font-semibold tabular-nums tracking-tight text-stone-900 leading-none">
+                {s.value}
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <FileText className="w-5 h-5" />
-            </div>
-          </div>
-        </Card>
+          ))}
+        </div>
+      </Card>
 
-        <Card className="border-l-4 border-l-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Pending Review
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">{inReviewCount}</h3>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Clock className="w-5 h-5" />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="border-l-4 border-l-amber-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Changes Requested
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">{changesCount}</h3>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-              <AlertCircle className="w-5 h-5" />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="border-l-4 border-l-emerald-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Approved Copy
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">{approvedCount}</h3>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Secondary Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <Card className="md:col-span-1 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-              <ShieldAlert className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-base text-white">Governance Guard</h3>
-              <p className="text-xs text-slate-400">Rule Engine &amp; Claim Auditing</p>
-            </div>
-          </div>
-          <p className="text-sm text-slate-300 mb-4">
-            Total rule triggers &amp; potential mismatches recorded across active drafts:
-          </p>
-          <div className="text-3xl font-bold text-white mb-2">
-            {overview?.total_findings || 0}
-          </div>
-          <div className="text-xs text-slate-400">
-            {overview?.total_resolved_findings || 0} resolved before publication
-          </div>
-        </Card>
-
-        {/* Recent Submissions */}
+      {/* Body */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card
-          className="md:col-span-2"
-          title="Recent Submissions"
-          subtitle="Content submissions in this workspace"
+          className="lg:col-span-2"
+          bodyClassName="p-0"
+          title="Recent submissions"
           action={
-            <Link to="/submissions" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1">
-              View all <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <button
+              onClick={() => navigate('/submissions')}
+              className="inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-800 cursor-pointer"
+            >
+              View all
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
           }
         >
           {submissions.length === 0 ? (
             <EmptyState
               title="No submissions yet"
-              description="Create your first content submission to check it against your brand rules."
-              actionLabel="Create Submission"
+              description="Create your first submission to check it against your brand rules."
+              actionLabel="Create submission"
               onAction={() => navigate('/submissions/new')}
             />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <th className="pb-3">Title</th>
-                    <th className="pb-3">Type</th>
-                    <th className="pb-3">Status</th>
-                    <th className="pb-3">Revision</th>
-                    <th className="pb-3 text-right">Action</th>
+                  <tr className="bg-stone-50 border-b border-stone-200 text-[11px] font-semibold text-stone-500 uppercase tracking-wider">
+                    <th className="py-2.5 pl-5 pr-4">Title</th>
+                    <th className="py-2.5 px-4">Type</th>
+                    <th className="py-2.5 px-4">Status</th>
+                    <th className="py-2.5 px-4">Rev</th>
+                    <th className="py-2.5 px-5" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {submissions.slice(0, 5).map((sub) => (
-                    <tr key={sub.id} className="hover:bg-slate-50/50">
-                      <td className="py-3 font-medium text-slate-900 truncate max-w-xs">
+                <tbody className="divide-y divide-stone-100">
+                  {submissions.slice(0, 6).map((sub) => (
+                    <tr
+                      key={sub.id}
+                      onClick={() => navigate(`/submissions/${sub.id}`)}
+                      className="hover:bg-stone-50/70 cursor-pointer transition-colors"
+                    >
+                      <td className="py-3 pl-5 pr-4 font-medium text-stone-900 max-w-[18rem] truncate">
                         {sub.title}
                       </td>
-                      <td className="py-3 text-slate-500 text-xs capitalize">
+                      <td className="py-3 px-4 text-stone-500 text-xs capitalize whitespace-nowrap">
                         {sub.content_type.replace('_', ' ')}
                       </td>
-                      <td className="py-3">
+                      <td className="py-3 px-4">
                         <StatusBadge status={sub.status} />
                       </td>
-                      <td className="py-3 text-slate-500 text-xs">Rev {sub.current_revision_number}</td>
-                      <td className="py-3 text-right">
-                        <Link to={`/submissions/${sub.id}`}>
-                          <Button size="sm" variant="outline">
-                            Review
-                          </Button>
-                        </Link>
+                      <td className="py-3 px-4 text-stone-400 text-xs font-mono">
+                        R{sub.current_revision_number}
+                      </td>
+                      <td className="py-3 px-5 text-right">
+                        <span className="text-xs font-medium text-teal-700">Open</span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          )}
+        </Card>
+
+        {/* Findings */}
+        <Card
+          title="Audit findings"
+          action={
+            <button
+              onClick={() => navigate('/analytics')}
+              className="inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-800 cursor-pointer"
+            >
+              Analytics
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          }
+        >
+          <div className="text-[1.75rem] font-semibold tabular-nums tracking-tight text-stone-900 leading-none">
+            {totalFindings}
+          </div>
+          <p className="text-[13px] text-stone-500 mt-1.5">
+            {totalFindings === 0
+              ? 'No rule triggers recorded yet.'
+              : 'issues caught by rule checks'}
+          </p>
+
+          {totalFindings > 0 && (
+            <>
+              <div className="mt-4 h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-teal-600 transition-all duration-500"
+                  style={{ width: `${resolutionPct}%` }}
+                />
+              </div>
+              <div className="mt-2 flex justify-between text-xs text-stone-500">
+                <span className="font-medium text-stone-700 tabular-nums">
+                  {resolvedFindings} resolved
+                </span>
+                <span className="tabular-nums">{totalFindings - resolvedFindings} open</span>
+              </div>
+            </>
           )}
         </Card>
       </div>

@@ -9,7 +9,7 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <LoadingSpinner message="Checking authentication session..." />
       </div>
     );

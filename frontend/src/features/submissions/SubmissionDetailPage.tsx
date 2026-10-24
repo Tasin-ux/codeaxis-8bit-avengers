@@ -317,23 +317,23 @@ export const SubmissionDetailPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header & Actions Bar */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-stone-200">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/submissions')}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 cursor-pointer"
+            className="p-1.5 rounded-lg text-stone-500 hover:text-stone-800 hover:bg-stone-100 cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-slate-900">{submission.title}</h2>
+              <h2 className="text-xl font-bold text-stone-900">{submission.title}</h2>
               <StatusBadge status={submission.status} />
-              <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono">
+              <span className="text-xs px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 font-mono">
                 Rev {submission.current_revision_number}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-stone-500 mt-0.5">
               Category: <span className="capitalize">{submission.content_type.replace('_', ' ')}</span> •
               Created: {new Date(submission.created_at).toLocaleString()}
             </p>
@@ -399,14 +399,14 @@ export const SubmissionDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Editor & Tabs (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="flex border-b border-slate-200 gap-6 text-sm font-medium">
+          <div className="flex border-b border-stone-200 gap-6 text-sm font-medium">
             <button
               onClick={() => setActiveTab('editor')}
               className={clsx(
                 'pb-2.5 flex items-center gap-2 cursor-pointer',
                 activeTab === 'editor'
-                  ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'border-b-2 border-teal-600 text-teal-600 font-semibold'
+                  : 'text-stone-500 hover:text-stone-800'
               )}
             >
               Content Editor
@@ -416,8 +416,8 @@ export const SubmissionDetailPage: React.FC = () => {
               className={clsx(
                 'pb-2.5 flex items-center gap-2 cursor-pointer',
                 activeTab === 'revisions'
-                  ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'border-b-2 border-teal-600 text-teal-600 font-semibold'
+                  : 'text-stone-500 hover:text-stone-800'
               )}
             >
               <History className="w-4 h-4" />
@@ -428,8 +428,8 @@ export const SubmissionDetailPage: React.FC = () => {
               className={clsx(
                 'pb-2.5 flex items-center gap-2 cursor-pointer',
                 activeTab === 'comments'
-                  ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'border-b-2 border-teal-600 text-teal-600 font-semibold'
+                  : 'text-stone-500 hover:text-stone-800'
               )}
             >
               <MessageSquare className="w-4 h-4" />
@@ -439,7 +439,7 @@ export const SubmissionDetailPage: React.FC = () => {
 
           {activeTab === 'editor' && (
             <Card className="p-0 overflow-hidden shadow-xs">
-              <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
+              <div className="bg-stone-50 px-4 py-2 border-b border-stone-200 flex items-center justify-between text-xs text-stone-500">
                 <span>
                   {canEdit ? 'Editable Mode' : 'Read-Only Mode (Under Review or Approved)'}
                 </span>
@@ -456,7 +456,7 @@ export const SubmissionDetailPage: React.FC = () => {
                 }}
                 disabled={!canEdit}
                 rows={16}
-                className="w-full p-4 font-sans text-sm text-slate-800 leading-relaxed focus:outline-none resize-y border-0"
+                className="w-full p-4 font-sans text-sm text-stone-800 leading-relaxed focus:outline-none resize-y border-0"
                 placeholder="Draft copy..."
               />
             </Card>
@@ -468,18 +468,18 @@ export const SubmissionDetailPage: React.FC = () => {
                 {revisions.map((rev) => (
                   <div
                     key={rev.id}
-                    className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-2"
+                    className="p-4 rounded-xl border border-stone-100 bg-stone-50/50 space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-900 text-sm">
+                      <span className="font-semibold text-stone-900 text-sm">
                         Revision #{rev.revision_number}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-stone-500">
                         {new Date(rev.created_at).toLocaleString()}
                       </span>
                     </div>
-                    {rev.summary && <p className="text-xs text-slate-600 italic">{rev.summary}</p>}
-                    <p className="text-xs text-slate-700 bg-white p-3 rounded-lg border border-slate-100 font-mono whitespace-pre-wrap">
+                    {rev.summary && <p className="text-xs text-stone-600 italic">{rev.summary}</p>}
+                    <p className="text-xs text-stone-700 bg-white p-3 rounded-lg border border-stone-100 font-mono whitespace-pre-wrap">
                       {rev.content}
                     </p>
                   </div>
@@ -492,34 +492,34 @@ export const SubmissionDetailPage: React.FC = () => {
             <Card title="Review Discussion &amp; Feedback">
               <div className="space-y-4">
                 {comments.length === 0 ? (
-                  <p className="text-sm text-slate-500 italic text-center py-6">
+                  <p className="text-sm text-stone-500 italic text-center py-6">
                     No comments recorded yet.
                   </p>
                 ) : (
                   <div className="space-y-3">
                     {comments.map((c) => (
-                      <div key={c.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <div key={c.id} className="p-3 rounded-xl bg-stone-50 border border-stone-100">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-slate-700">
+                          <span className="text-xs font-semibold text-stone-700">
                             {c.author_id === user?.id ? 'You' : 'Reviewer'}
                           </span>
-                          <span className="text-2xs text-slate-400">
+                          <span className="text-2xs text-stone-400">
                             {new Date(c.created_at).toLocaleString()}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-800">{c.text}</p>
+                        <p className="text-sm text-stone-800">{c.text}</p>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <form onSubmit={handleAddComment} className="mt-4 pt-4 border-t border-slate-100 flex gap-2">
+                <form onSubmit={handleAddComment} className="mt-4 pt-4 border-t border-stone-100 flex gap-2">
                   <input
                     type="text"
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a comment or change note..."
-                    className="flex-1 rounded-lg border border-slate-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    className="flex-1 rounded-lg border border-stone-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-100"
                   />
                   <Button type="submit" size="sm" loading={submittingComment}>
                     Comment
@@ -548,11 +548,11 @@ export const SubmissionDetailPage: React.FC = () => {
             }
           >
             {/* Filters */}
-            <div className="flex gap-2 mb-4 pb-3 border-b border-slate-100">
+            <div className="flex gap-2 mb-4 pb-3 border-b border-stone-100">
               <select
                 value={severityFilter}
                 onChange={(e) => setSeverityFilter(e.target.value)}
-                className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700"
+                className="text-xs border border-stone-200 rounded-lg px-2 py-1 bg-white text-stone-700"
               >
                 <option value="all">All Severities</option>
                 <option value="critical">Critical</option>
@@ -565,7 +565,7 @@ export const SubmissionDetailPage: React.FC = () => {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700"
+                className="text-xs border border-stone-200 rounded-lg px-2 py-1 bg-white text-stone-700"
               >
                 <option value="all">All Categories</option>
                 <option value="prohibited_phrase">Prohibited Phrase</option>
@@ -581,8 +581,8 @@ export const SubmissionDetailPage: React.FC = () => {
             {filteredFindings.length === 0 ? (
               <div className="text-center py-10 px-4">
                 <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-                <h4 className="font-semibold text-slate-900 text-sm">No Compliance Violations</h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                <h4 className="font-semibold text-stone-900 text-sm">No Compliance Violations</h4>
+                <p className="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
                   {findings.length === 0
                     ? 'This draft complies with all active workspace rules.'
                     : 'No findings match the selected filter.'}
@@ -600,18 +600,18 @@ export const SubmissionDetailPage: React.FC = () => {
                       className={clsx(
                         'p-4 rounded-xl border transition-all text-sm space-y-2.5',
                         selectedFindingId === f.id
-                          ? 'border-indigo-500 ring-2 ring-indigo-50 bg-indigo-50/20'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
+                          ? 'border-teal-500 ring-2 ring-teal-50 bg-teal-50/20'
+                          : 'border-stone-200 bg-white hover:border-stone-300'
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-2xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 capitalize">
+                        <span className="text-2xs font-semibold px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 capitalize">
                           {f.category.replace('_', ' ')}
                         </span>
                         <SeverityBadge severity={f.severity} />
                       </div>
 
-                      <h4 className="font-semibold text-slate-900 text-sm leading-snug">
+                      <h4 className="font-semibold text-stone-900 text-sm leading-snug">
                         {f.title}
                       </h4>
 
@@ -622,7 +622,7 @@ export const SubmissionDetailPage: React.FC = () => {
                       )}
 
                       {f.explanation && (
-                        <p className="text-xs text-slate-600 leading-relaxed">
+                        <p className="text-xs text-stone-600 leading-relaxed">
                           {f.explanation}
                         </p>
                       )}
@@ -651,7 +651,7 @@ export const SubmissionDetailPage: React.FC = () => {
                       )}
 
                       {/* Action buttons */}
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                      <div className="flex items-center justify-between pt-2 border-t border-stone-100">
                         {canEdit && canApplySuggestion(f) && (
                           <Button
                             size="sm"
@@ -674,7 +674,7 @@ export const SubmissionDetailPage: React.FC = () => {
                             setFlagFinding(f);
                             setFlagModalOpen(true);
                           }}
-                          className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 ml-auto cursor-pointer"
+                          className="text-xs text-stone-400 hover:text-stone-600 flex items-center gap-1 ml-auto cursor-pointer"
                         >
                           <HelpCircle className="w-3.5 h-3.5" /> Flag unclear
                         </button>
@@ -695,7 +695,7 @@ export const SubmissionDetailPage: React.FC = () => {
         title="Authorised Review Decision"
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-stone-600">
             As a brand manager or admin, review the content and record your governance decision.
           </p>
 
@@ -707,7 +707,7 @@ export const SubmissionDetailPage: React.FC = () => {
                 'p-3 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all',
                 reviewDecision === 'approved'
                   ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-200'
-                  : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                  : 'border-stone-200 hover:bg-stone-50 text-stone-700'
               )}
             >
               <CheckCircle className="w-4 h-4 text-emerald-600" />
@@ -721,7 +721,7 @@ export const SubmissionDetailPage: React.FC = () => {
                 'p-3 rounded-xl border text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all',
                 reviewDecision === 'changes_requested'
                   ? 'border-amber-500 bg-amber-50 text-amber-700 ring-2 ring-amber-200'
-                  : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                  : 'border-stone-200 hover:bg-stone-50 text-stone-700'
               )}
             >
               <AlertCircle className="w-4 h-4 text-amber-600" />
@@ -759,17 +759,17 @@ export const SubmissionDetailPage: React.FC = () => {
         title="Guideline Clarity Feedback"
       >
         <form onSubmit={handleFlagUnclearSubmit} className="space-y-4">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-stone-600">
             Report rules or findings that feel unclear, too strict, or inaccurate to help brand
             managers refine brand governance rules.
           </p>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Feedback Type</label>
+            <label className="block text-sm font-medium text-stone-700 mb-1">Feedback Type</label>
             <select
               value={flagType}
               onChange={(e) => setFlagType(e.target.value as any)}
-              className="w-full rounded-md border border-slate-300 p-2 text-sm text-slate-800"
+              className="w-full rounded-md border border-stone-300 p-2 text-sm text-stone-800"
             >
               <option value="unclear">Rule is unclear or ambiguous</option>
               <option value="too_strict">Rule is overly strict for this context</option>

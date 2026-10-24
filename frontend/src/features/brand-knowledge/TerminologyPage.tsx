@@ -10,6 +10,7 @@ import { Modal } from '../../components/ui/Modal';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Alert } from '../../components/ui/Alert';
+import { useConfirm } from '../../components/ui/ConfirmDialog';
 import { Plus, Trash2, Edit2, SpellCheck, ArrowRight, Check, X } from 'lucide-react';
 
 export const TerminologyPage: React.FC = () => {
@@ -27,6 +28,7 @@ export const TerminologyPage: React.FC = () => {
   const [caseSensitive, setCaseSensitive] = useState(false);
 
   const canManage = membership?.role === 'admin' || membership?.role === 'manager';
+  const { ask, dialog } = useConfirm();
 
   const loadTerms = async () => {
     if (!currentWorkspace) {
@@ -97,7 +99,12 @@ export const TerminologyPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this terminology entry?')) return;
+    const ok = await ask({
+      title: 'Delete terminology entry?',
+      message: 'This permanently removes the preferred/disallowed term pair from this workspace.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await terminologyApi.delete(id);
       await loadTerms();
@@ -112,10 +119,10 @@ export const TerminologyPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
             Approved Terminology
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-stone-500 mt-1">
             Standardize vocabulary by replacing disallowed phrases with brand-preferred terms.
           </p>
         </div>
@@ -131,7 +138,7 @@ export const TerminologyPage: React.FC = () => {
       {terms.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<SpellCheck className="w-8 h-8 text-slate-400" />}
+            icon={<SpellCheck className="w-8 h-8 text-stone-400" />}
             title="No terminology rules configured"
             description="Add preferred vs disallowed terms for this workspace."
             actionLabel={canManage ? 'Add Terminology' : undefined}
@@ -142,7 +149,7 @@ export const TerminologyPage: React.FC = () => {
         <Card className="overflow-hidden p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <thead className="bg-stone-50 border-b border-stone-200 text-xs font-semibold text-stone-500 uppercase tracking-wider">
                 <tr>
                   <th className="py-3 px-6">Disallowed Term</th>
                   <th className="py-3 px-6"></th>
@@ -152,16 +159,16 @@ export const TerminologyPage: React.FC = () => {
                   {canManage && <th className="py-3 px-6 text-right">Actions</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-stone-100">
                 {terms.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/50">
+                  <tr key={t.id} className="hover:bg-stone-50/50">
                     <td className="py-4 px-6 font-semibold text-red-600">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-50 border border-red-200">
                         <X className="w-3.5 h-3.5" />
                         {t.disallowed_term}
                       </span>
                     </td>
-                    <td className="py-4 px-2 text-slate-400">
+                    <td className="py-4 px-2 text-stone-400">
                       <ArrowRight className="w-4 h-4" />
                     </td>
                     <td className="py-4 px-6 font-semibold text-emerald-700">
@@ -170,8 +177,8 @@ export const TerminologyPage: React.FC = () => {
                         {t.preferred_term}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-slate-600 max-w-xs">{t.explanation}</td>
-                    <td className="py-4 px-6 text-slate-500 text-xs">
+                    <td className="py-4 px-6 text-stone-600 max-w-xs">{t.explanation}</td>
+                    <td className="py-4 px-6 text-stone-500 text-xs">
                       {t.case_sensitive ? 'Yes' : 'No'}
                     </td>
                     {canManage && (
@@ -237,9 +244,9 @@ export const TerminologyPage: React.FC = () => {
               id="case_sensitive"
               checked={caseSensitive}
               onChange={(e) => setCaseSensitive(e.target.checked)}
-              className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="rounded border-stone-300 text-teal-600 focus:ring-teal-500"
             />
-            <label htmlFor="case_sensitive" className="text-sm font-medium text-slate-700">
+            <label htmlFor="case_sensitive" className="text-sm font-medium text-stone-700">
               Case sensitive matching
             </label>
           </div>
@@ -252,6 +259,7 @@ export const TerminologyPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+      {dialog}
     </div>
   );
 };

@@ -110,8 +110,10 @@ export const LoginPage: React.FC = () => {
   if (step === 'otp') {
     return (
       <div>
-        <h3 className="text-xl font-bold text-slate-900 mb-2">Verify your email</h3>
-        <p className="text-sm text-slate-500 mb-6">
+        <h3 className="text-[1.35rem] font-semibold text-stone-900 tracking-tight mb-1.5">
+          Verify your email
+        </h3>
+        <p className="text-sm text-stone-500 mb-6">
           Enter the verification code we emailed to <span className="font-semibold">{email}</span>.
         </p>
 
@@ -144,12 +146,12 @@ export const LoginPage: React.FC = () => {
           </Button>
         </form>
 
-        <div className="mt-6 flex items-center justify-between text-sm text-slate-600">
+        <div className="mt-6 flex items-center justify-between text-sm text-stone-600">
           <button
             type="button"
             onClick={handleResend}
             disabled={cooldown > 0 || loading}
-            className="font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400 disabled:cursor-not-allowed"
+            className="font-semibold text-teal-600 hover:text-teal-500 disabled:text-stone-400 disabled:cursor-not-allowed"
           >
             {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
           </button>
@@ -161,7 +163,7 @@ export const LoginPage: React.FC = () => {
               setInfo(null);
               setOtp('');
             }}
-            className="font-semibold text-slate-500 hover:text-slate-700"
+            className="font-semibold text-stone-500 hover:text-stone-700"
           >
             ← Back to sign in
           </button>
@@ -172,9 +174,11 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-slate-900 mb-2">Sign in to BrandGuard</h3>
-      <p className="text-sm text-slate-500 mb-6">
-        Enter your credentials to access your brand governance workspace.
+      <h3 className="text-[1.35rem] font-semibold text-stone-900 tracking-tight mb-1.5">
+        Sign in to BrandGuard
+      </h3>
+      <p className="text-sm text-stone-500 mb-6">
+        Enter your credentials to continue to your workspace.
       </p>
 
       {error && (
@@ -185,7 +189,7 @@ export const LoginPage: React.FC = () => {
               type="button"
               onClick={handleSendCode}
               disabled={loading}
-              className="mt-2 font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400"
+              className="mt-2 font-semibold text-teal-600 hover:text-teal-500 disabled:text-stone-400"
             >
               Send verification code →
             </button>
@@ -217,9 +221,9 @@ export const LoginPage: React.FC = () => {
         </Button>
       </form>
 
-      <div className="mt-6 border-t border-slate-100 pt-4">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 text-center">
-          Quick Demo Accounts
+      <div className="mt-6 border-t border-stone-100 pt-4">
+        <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2 text-center">
+          Demo accounts
         </p>
         <div className="flex gap-2">
           <Button
@@ -243,9 +247,9 @@ export const LoginPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-6 text-center text-sm text-slate-600">
+      <div className="mt-6 text-center text-sm text-stone-600">
         Don&apos;t have an account?{' '}
-        <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
+        <Link to="/register" className="font-semibold text-teal-600 hover:text-teal-500">
           Create an account
         </Link>
       </div>

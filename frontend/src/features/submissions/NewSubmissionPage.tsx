@@ -93,7 +93,7 @@ export const NewSubmissionPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate('/submissions')}
-          className="text-sm font-medium text-slate-500 hover:text-slate-800 flex items-center gap-1.5 cursor-pointer"
+          className="text-sm font-medium text-stone-500 hover:text-stone-800 flex items-center gap-1.5 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Back to submissions
         </button>
@@ -119,8 +119,8 @@ export const NewSubmissionPage: React.FC = () => {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">New Content Draft</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tight">New Content Draft</h2>
+        <p className="text-sm text-stone-500 mt-1">
           Draft marketing copy or paste text to audit against workspace brand guidelines and approved facts.
         </p>
       </div>
@@ -173,8 +173,8 @@ export const NewSubmissionPage: React.FC = () => {
               required
             />
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-              <div className="text-xs text-slate-400">
+            <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+              <div className="text-xs text-stone-400">
                 {content.length} characters • {content.trim().split(/\s+/).filter(Boolean).length} words
               </div>
               <Button type="submit" loading={loading} icon={<Sparkles className="w-4 h-4" />}>
