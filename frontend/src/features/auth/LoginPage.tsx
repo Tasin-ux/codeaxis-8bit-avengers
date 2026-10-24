@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Alert } from '../../components/ui/Alert';
 
+const RESEND_COOLDOWN_SECONDS = 60;
+
 export const LoginPage: React.FC = () => {
+  const [step, setStep] = useState<'login' | 'otp'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [cooldown, setCooldown] = useState(0);
+  const { login, verifyOtp, resendOtp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  const nextPath = () => {
+    const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
+    const next = new URLSearchParams(location.search).get('next');
+    return from || next || '/';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,16 +39,66 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login(email, password);
-      // Return the user to the page they originally requested, if any.
-      const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
-      const next = new URLSearchParams(location.search).get('next');
-      navigate(from || next || '/', { replace: true });
+      navigate(nextPath(), { replace: true });
     } catch (err: any) {
-      setError(
-        err.response?.data?.detail || 'Invalid email or password. Please try again.'
-      );
+      if (err.response?.status === 403) {
+        // Unverified account — offer to send/enter a verification code.
+        setError(err.response?.data?.detail || 'Account not verified.');
+      } else {
+        setError(
+          err.response?.data?.detail || 'Invalid email or password. Please try again.'
+        );
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSendCode = async () => {
+    setError(null);
+    if (!email.includes('@')) {
+      setError('Enter your email address (not username), then click "Send verification code".');
+      return;
+    }
+    setLoading(true);
+    try {
+      await resendOtp(email, 'register');
+      setStep('otp');
+      setInfo(`We sent a 6-digit code to ${email}. Enter it to activate your account.`);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Could not send the code. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!/^\d{6}$/.test(otp)) {
+      setError('Please enter the 6-digit code from your email');
+      return;
+    }
+    setLoading(true);
+    try {
+      await verifyOtp(email, otp);
+      navigate(nextPath(), { replace: true });
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Invalid verification code. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setError(null);
+    try {
+      await resendOtp(email, 'register');
+      setInfo(`A new code was sent to ${email}.`);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Could not resend the code. Please try again.');
     }
   };
 
@@ -38,6 +106,69 @@ export const LoginPage: React.FC = () => {
     setEmail(demoEmail);
     setPassword('Demo123!@#');
   };
+
+  if (step === 'otp') {
+    return (
+      <div>
+        <h3 className="text-xl font-bold text-slate-900 mb-2">Verify your email</h3>
+        <p className="text-sm text-slate-500 mb-6">
+          Enter the verification code we emailed to <span className="font-semibold">{email}</span>.
+        </p>
+
+        {error && (
+          <Alert type="error" className="mb-4">
+            {error}
+          </Alert>
+        )}
+        {info && (
+          <Alert type="info" className="mb-4">
+            {info}
+          </Alert>
+        )}
+
+        <form onSubmit={handleOtpSubmit} className="space-y-4">
+          <Input
+            label="Verification Code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+            placeholder="123456"
+            required
+          />
+
+          <Button type="submit" className="w-full" loading={loading} disabled={otp.length !== 6}>
+            Verify &amp; Sign In
+          </Button>
+        </form>
+
+        <div className="mt-6 flex items-center justify-between text-sm text-slate-600">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={cooldown > 0 || loading}
+            className="font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400 disabled:cursor-not-allowed"
+          >
+            {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setStep('login');
+              setError(null);
+              setInfo(null);
+              setOtp('');
+            }}
+            className="font-semibold text-slate-500 hover:text-slate-700"
+          >
+            ← Back to sign in
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -48,7 +179,17 @@ export const LoginPage: React.FC = () => {
 
       {error && (
         <Alert type="error" className="mb-4">
-          {error}
+          <div>{error}</div>
+          {error.toLowerCase().includes('not verified') && (
+            <button
+              type="button"
+              onClick={handleSendCode}
+              disabled={loading}
+              className="mt-2 font-semibold text-indigo-600 hover:text-indigo-500 disabled:text-slate-400"
+            >
+              Send verification code →
+            </button>
+          )}
         </Alert>
       )}
 
