@@ -1,296 +1,270 @@
-# BrandGuard AI
+<div align="center">
 
-> **AI-Assisted Brand Governance & Content Compliance Platform**  
-> Proposed by Hackathon Team **8-Bit Avengers**
+# 🛡️ BrandGuard AI
 
-BrandGuard AI is a full-stack, enterprise-grade brand governance platform that audits marketing content against approved brand voice guidelines, terminology, prohibited phrases, required disclaimers, and verified product facts prior to publication.
+**AI-assisted brand governance & content compliance platform**
 
----
+Audit every piece of marketing copy against your brand voice, terminology,
+prohibited phrases, legal disclaimers, and verified product facts — before it ships.
 
-## Table of Contents
+[![Live Demo](https://img.shields.io/badge/Live_Demo-brandguard--frontend.vercel.app-0d9488?style=for-the-badge&logo=vercel&logoColor=white)](https://brandguard-frontend.vercel.app)
+[![API Docs](https://img.shields.io/badge/API-Docs_on_Render-1c1917?style=for-the-badge&logo=fastapi&logoColor=teal)](https://brandguard-api.onrender.com/docs)
+[![React](https://img.shields.io/badge/React_19-20232a?style=for-the-badge&logo=react&logoColor=61dafb)](https://react.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-0f172a?style=for-the-badge&logo=tailwindcss&logoColor=38bdf8)](https://tailwindcss.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 
-1. [Key Features](#key-features)
-2. [Technology Stack](#technology-stack)
-3. [Architecture Overview](#architecture-overview)
-4. [User Roles and Permissions](#user-roles-and-permissions)
-5. [Prerequisites](#prerequisites)
-6. [Installation & Setup](#installation--setup)
-7. [Environment Configuration](#environment-configuration)
-8. [Database Initialization & Seeding](#database-initialization--seeding)
-9. [Starting the Application](#starting-the-application)
-10. [Running Automated Tests & Quality Checks](#running-automated-tests--quality-checks)
-11. [AI Provider Configuration & Graceful Fallback](#ai-provider-configuration--graceful-fallback)
-12. [Demonstration Scenarios](#demonstration-scenarios)
-13. [Deployment Guide](#deployment-guide)
-14. [Security & Privacy Safeguards](#security--privacy-safeguards)
-15. [Known Limitations](#known-limitations)
+**▶ Live app: [brandguard-frontend.vercel.app](https://brandguard-frontend.vercel.app) · API health: [/health](https://brandguard-api.onrender.com/health)**
+
+</div>
 
 ---
 
-## 1. Key Features
+## ✨ Highlights
 
-- **Deterministic Rule Engine**: High-performance Python regex engine that scans text with exact character offsets, whole-word boundaries, and case sensitivity settings to detect prohibited phrases and unapproved terminology.
-- **Auditable Product Facts Knowledge Base**: Maintains verified claims, SLA promises, certifications, and datasheets. Distinguishes between contradictory claims, supported claims, and unverified assertions.
-- **Critical Factual Claim Principle**: Missing evidence does not prove a claim is false. BrandGuard AI flags unsupported claims as requiring human verification without fabricating citations.
-- **Interactive Content Review Workspace**: Split-panel interface allowing authors to edit drafts, inspect highlight spans, and apply suggested corrections directly into the content with one click.
-- **Review & Approval State Machine**: Formal state machine (`draft` ➔ `in_review` ➔ `changes_requested` / `approved`). Author self-approval is blocked; only authorized Brand Managers or Administrators can approve publications.
-- **Immutable Revision History**: Snapshots every draft change with revision numbers and diffs.
-- **Governance Analytics**: Real-time KPI dashboard tracking total submissions, violation counts by category and severity, frequently triggered rules, and rules marked unclear.
-- **Rule Clarity Feedback Loop**: Allows authors to flag ambiguous or overly strict rules for managerial review.
-- **Workspace Isolation**: Strict workspace-level scoping across all database models and API routes to prevent multi-tenant data leakage.
-
----
-
-## 2. Technology Stack
-
-### Frontend
-- **Framework**: React 19, TypeScript
-- **Bundler & Tooling**: Vite, Tailwind CSS v4, ESLint
-- **Routing**: React Router v7
-- **HTTP Client**: Axios with automatic JWT interceptors
-- **Icons**: Lucide React
-- **Analytics Visualization**: Recharts
-
-### Backend
-- **Framework**: Python 3.10+ / 3.14 compatible, FastAPI, Uvicorn
-- **Validation**: Pydantic v2 & Pydantic-Settings
-- **ORM & Database**: SQLAlchemy 2.0, SQLite (Local Dev/Demo), PostgreSQL (Production)
-- **Migrations**: Alembic
-- **Security & Authentication**: Argon2id (`argon2-cffi`), Python-Jose (JWT)
-- **Testing**: Pytest, Pytest-Asyncio, HTTPX
+| | |
+| :--- | :--- |
+| ⚡ **Deterministic rule engine** | Python regex engine with exact character offsets, whole-word boundaries, and case-sensitivity controls — no false positives, no guesswork. |
+| 📚 **Auditable fact base** | Verified claims, SLAs, certifications, and datasheets. Distinguishes *contradictory*, *supported*, and *unverified* assertions. |
+| 🔍 **Honest AI fallback** | Missing evidence never proves a claim false — unsupported claims are flagged for human verification instead of fabricated citations. |
+| ✍️ **Split-panel review workspace** | Edit drafts, inspect highlighted violations, and apply suggested fixes in one click. |
+| 🚦 **Approval state machine** | `draft → in_review → changes_requested / approved`, with author self-approval blocked by design. |
+| 🧾 **Immutable revisions** | Every save is snapshotted with revision numbers and diffs. |
+| 📊 **Governance analytics** | Live KPIs: violations by category & severity, most-triggered rules, rules marked unclear. |
+| 🏢 **Multi-tenant workspaces** | Strict workspace scoping on every model and route — zero cross-tenant leakage. |
+| 🔐 **Email OTP sign-up** | Registration is verified via 6-digit email codes (Resend). |
 
 ---
 
-## 3. Architecture Overview
+## 🧪 Try it live
+
+The app is deployed end-to-end — no setup needed:
+
+1. Open **[brandguard-frontend.vercel.app](https://brandguard-frontend.vercel.app)**
+2. Sign in with a demo account:
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| 👑 Administrator | `admin@brandguard.ai` | `Demo123!@#` |
+| ✍️ Content Creator | `creator@brandguard.ai` | `Demo123!@#` |
+
+> **Note on sign-ups:** new accounts must verify a 6-digit email code. During demo
+> the email sender (`onboarding@resend.dev`) has no verified domain, so OTP codes are
+> only delivered to the workspace owner's inbox — use a seeded demo account instead.
+
+---
+
+## 🛠 Tech stack
+
+**Frontend** — React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router v7 · Axios (JWT interceptors) · Recharts · Lucide icons
+
+**Backend** — Python 3.10+ · FastAPI · Uvicorn · Pydantic v2 · SQLAlchemy 2.0 · Alembic · Argon2id · python-jose (JWT) · Pytest
+
+**Infra** — PostgreSQL (Render) · Backend on Render · Frontend on Vercel · Resend (OTP email)
+
+---
+
+## 🏗 Architecture
 
 ```
-React 19 Frontend (SPA)
-       │ (JSON REST API / Bearer JWT)
-       ▼
-FastAPI Backend Application
- ├── Authentication & RBAC (Argon2id, JWT)
- ├── Workspace Scoping & Tenant Isolation
- ├── Brand Knowledge Base CRUD
- ├── Deterministic Rule Engine (Regex, Offsets)
- ├── Optional AI Analysis (Gemini / OpenAI)
- ├── Human Review State Machine
- └── Governance Analytics Engine
-       │
-       ▼
-Persistent Database (SQLite / PostgreSQL)
+React 19 SPA  ──JSON REST / Bearer JWT──▶  FastAPI
+                                            ├── Auth & RBAC (Argon2id + JWT + OTP)
+                                            ├── Workspace scoping & tenant isolation
+                                            ├── Brand knowledge base CRUD
+                                            ├── Deterministic rule engine (regex offsets)
+                                            ├── Optional AI analysis (Gemini / OpenAI)
+                                            ├── Human review state machine
+                                            └── Governance analytics engine
+                                                    │
+                                                    ▼
+                                        SQLite (dev) / PostgreSQL (prod)
 ```
 
-For detailed component documentation, see [docs/architecture.md](docs/architecture.md).
+See [docs/architecture.md](docs/architecture.md) for detailed component documentation.
 
 ---
 
-## 4. User Roles and Permissions
+## 👥 Roles & permissions
 
 | Role | Permissions |
 | :--- | :--- |
-| **Administrator** | Full control over workspace settings, membership roles, brand rules, submissions, and governance analytics. |
-| **Brand Manager** | Creates brand guidelines, terminology, phrases, disclaimers, and verified facts. Reviews submissions, requests changes, and approves content. |
-| **Content Creator** | Creates and edits drafts, runs audits, applies suggestions, and submits drafts for managerial review. Cannot approve own work. |
-| **External Contributor** | Restricted to authorized draft submissions without accessing unrelated confidential brand assets. |
+| **Administrator** | Full control: workspace settings, membership, brand rules, submissions, analytics. |
+| **Brand Manager** | Manages guidelines, terminology, phrases, disclaimers, facts. Reviews and approves content. |
+| **Content Creator** | Creates drafts, runs audits, applies suggestions, submits for review. **Cannot approve own work.** |
+| **External Contributor** | Restricted draft submissions only. |
 
 ---
 
-## 5. Prerequisites
+## 🚀 Getting started
 
-- **Python**: Version 3.10, 3.11, 3.12, 3.13, or 3.14
-- **Node.js**: Version 18+ (Node 20+ recommended)
-- **npm**: Version 9+
+### Prerequisites
 
----
+- **Python** 3.10+
+- **Node.js** 18+ (20+ recommended) and **npm** 9+
 
-## 6. Installation & Setup
+### 1. Clone
 
-### 1. Clone the repository
 ```bash
-cd "c:\Users\Kamran Hossain\OneDrive\Desktop\BrandGuard"
+git clone https://github.com/Tasin-ux/codeaxis-8bit-avengers.git
+cd codeaxis-8bit-avengers
 ```
 
-### 2. Backend Setup
+### 2. Backend
+
 ```bash
 cd backend
-
-# Create virtual environment
 python -m venv .venv
 
-# Activate virtual environment (Windows PowerShell)
+# Windows
 .\.venv\Scripts\Activate.ps1
+# macOS / Linux
+source .venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Frontend Setup
+### 3. Frontend
+
 ```bash
 cd ../frontend
-
-# Install dependencies
 npm install
 ```
 
----
-
-## 7. Environment Configuration
-
-Create a `.env` file in the project root by copying `.env.example`:
+### 4. Environment
 
 ```bash
 cp .env.example .env
 ```
 
-Key environment settings:
 ```ini
 ENVIRONMENT=development
 DATABASE_URL=sqlite:///./brandguard.db
-SECRET_KEY=dev-secret-change-in-production-never-commit-real-secrets
+SECRET_KEY=dev-secret-change-in-production
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 REFRESH_TOKEN_EXPIRE_DAYS=7
 CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 
-# Optional AI Analysis (Set to 'none' for local deterministic checking only)
+# Optional — set to 'none' for deterministic-only checking
 AI_PROVIDER=none
 AI_API_KEY=
 AI_MODEL=
 ```
 
----
+### 5. Seed demo data
 
-## 8. Database Initialization & Seeding
-
-BrandGuard AI includes a database seed script that populates realistic demo accounts, brand voice guidelines, terminology, prohibited phrases, required disclaimers, auditable facts, and sample submissions.
+Populates demo accounts, brand guidelines, terminology, prohibited phrases,
+disclaimers, verified facts, and sample submissions:
 
 ```bash
 cd backend
-.\.venv\Scripts\python.exe scripts/seed.py
+.\.venv\Scripts\python.exe scripts/seed.py        # Windows
+# .venv/bin/python scripts/seed.py                # macOS / Linux
 ```
 
-### Seed Demo Accounts:
-- **Administrator**: `admin@brandguard.ai` / `Demo123!@#`
-- **Content Creator**: `creator@brandguard.ai` / `Demo123!@#`
+Apply migrations instead with:
 
-To apply Alembic migrations:
 ```bash
-cd backend
 .\.venv\Scripts\alembic.exe upgrade head
 ```
 
----
+### 6. Run
 
-## 9. Starting the Application
+**Backend** (terminal 1):
 
-### Start the Backend Server
 ```bash
 cd backend
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
-- API will be accessible at: `http://localhost:8000`
-- Swagger Documentation: `http://localhost:8000/docs`
-- Health Check: `http://localhost:8000/health`
 
-### Start the Frontend Server
-In a separate terminal:
+- API: http://localhost:8000 · Swagger: http://localhost:8000/docs · Health: http://localhost:8000/health
+
+**Frontend** (terminal 2):
+
 ```bash
 cd frontend
 npm run dev
 ```
-- Web Application will be accessible at: `http://localhost:5173`
+
+- App: http://localhost:5173
 
 ---
 
-## 10. Running Automated Tests & Quality Checks
+## ✅ Tests & quality checks
 
-### Backend Automated Test Suite (Pytest)
 ```bash
 cd backend
 .\.venv\Scripts\pytest.exe -v
 ```
-**Results**: 10 passed tests covering:
-- Prohibited phrase detection & offset calculation
-- Terminology replacement suggestions
-- Required disclaimer verification
-- Clean content verification (zero false positives)
-- Review lifecycle state machine transitions & self-approval prevention
-- Argon2id password hashing and token generation
-- Auth login & session recovery
-- Workspace isolation and cross-tenant access rejection
 
-### Frontend Production Build Check
+10 passing tests covering prohibited-phrase detection & offsets, terminology
+suggestions, disclaimer verification, zero-false-positive clean content,
+review state-machine transitions, self-approval prevention, Argon2id hashing,
+auth login & session recovery, and cross-tenant access rejection.
+
 ```bash
 cd frontend
-npm run build
+npm run build   # tsc type-check + Vite production bundle
+npm run lint    # ESLint
 ```
-Executes TypeScript type checking (`tsc -b`) and Vite production bundling.
-
-### Frontend Linter Check
-```bash
-cd frontend
-npm run lint
-```
-Runs ESLint across all TypeScript and React components.
 
 ---
 
-## 11. AI Provider Configuration & Graceful Fallback
+## 🤖 AI provider configuration
 
-BrandGuard AI is architected with a provider-independent AI abstraction:
-- When `AI_PROVIDER=none` or when no API key is provided, the application **remains fully operational**. Deterministic checks (prohibited phrases, terminology, disclaimers) execute normally.
-- When configured with `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` and a valid `AI_API_KEY`, the application supplements deterministic findings with contextual tone analysis, qualitative style assessments, and factual claim verifications.
-- Responses are validated against strict Pydantic schemas. Unverified claims cite lack of supporting evidence rather than making false accusations.
+BrandGuard works fully without any AI credentials:
 
----
-
-## 12. Demonstration Scenarios
-
-### Scenario A: Compliant Content
-- **Input**: `"Our application helps teams organise their daily work and manage project updates. Results may vary based on deployment configuration and network environment."`
-- **Result**: Zero false positives. Clean review summary.
-
-### Scenario B: Explicit Brand Rule Violation
-- **Input**: `"Our application guarantees results for every customer."`
-- **Result**: Prohibited phrase `"guarantees results"` flagged as High severity. Suggested correction: `"designed to help achieve measurable results"`. Applying the suggestion updates the editor draft in-place.
-
-### Scenario C: Unsupported Factual Claim
-- **Input**: `"Our application guarantees 100% fraud prevention."`
-- **Result**: Flagged as `unsupported_claim`. UI explicitly states: *"Unverified — no supporting evidence was found in the approved brand knowledge base."* Missing evidence does not prove the claim false; human verification is requested.
-
-### Scenario D: Human Approval Workflow
-1. Creator creates a draft and runs compliance check.
-2. Creator submits draft (`in_review`).
-3. Author attempts self-approval and is blocked (HTTP 403).
-4. Brand Manager inspects review queue and requests changes with comments (`changes_requested`).
-5. Creator revises draft and resubmits (`in_review`).
-6. Brand Manager approves content (`approved`).
-7. Complete revision history and decisions are recorded immutably.
-
-### Scenario E: AI Unavailable Fallback
-- Run audit without external AI credentials. Deterministic engine completes with 100% functionality and no crashes.
-
-### Scenario F: Multi-Tenant Workspace Isolation
-- User B cannot access User A's workspace submissions, guidelines, or analytics (HTTP 403 Forbidden).
+- `AI_PROVIDER=none` (or no key) → deterministic engine runs 100% of checks, no crashes.
+- `AI_PROVIDER=gemini` or `openai` with a valid `AI_API_KEY` → adds contextual tone analysis,
+  qualitative style assessments, and factual claim verification on top of deterministic findings.
+- All AI responses are validated against strict Pydantic schemas; unverified claims cite
+  missing evidence rather than making false accusations.
 
 ---
 
-## 13. Deployment Guide
+## 🎬 Demo scenarios
 
-See [docs/deployment.md](docs/deployment.md) for full production deployment instructions on Vercel, Render, Docker, and PostgreSQL.
-
----
-
-## 14. Security & Privacy Safeguards
-
-- **Argon2id Hashing**: Robust, memory-hard password hashing.
-- **JWT Authentication**: Short-lived tokens with cryptographically signed payloads.
-- **ReDoS Protection**: Pattern length limiting and regex sanitization in the rule engine.
-- **Untrusted Input Handling**: Draft text is treated as untrusted data to protect against prompt injection.
-- **No Hardcoded Secrets**: All configuration managed via environment variables.
+- **A — Clean content**: compliant copy audits with zero false positives.
+- **B — Rule violation**: *"…guarantees results…"* → High-severity flag with one-click suggested fix.
+- **C — Unsupported claim**: *"…guarantees 100% fraud prevention."* → flagged `unsupported_claim`, human verification requested — never a fabricated citation.
+- **D — Approval workflow**: creator submits → manager requests changes → creator revises → manager approves. Self-approval returns HTTP 403.
+- **E — AI offline**: audits complete on the deterministic engine alone.
+- **F — Tenant isolation**: cross-workspace reads return HTTP 403.
 
 ---
 
-## 15. Known Limitations
+## 🔒 Security
 
-1. **Rich Text Formatting**: Current MVP focuses on plain text, Markdown, and copy text; full rich WYSIWYG rich text formatting (HTML tables, inline images) is deferred to future enterprise releases.
-2. **External File Parsing**: Text can be pasted directly; binary file uploads (.docx/.pdf parsing) are planned for the next roadmap phase.
+- **Argon2id** password hashing · **JWT** auth with short-lived tokens · **Email OTP** verification
+- **ReDoS protection** via pattern length limits and regex sanitization
+- Draft text treated as untrusted data (prompt-injection hardening)
+- No hardcoded secrets — configuration via environment variables only
+
+---
+
+## 🌐 Deployment
+
+The production stack runs on free tiers and is fully wired:
+
+| Piece | Platform | URL |
+| :--- | :--- | :--- |
+| Frontend | Vercel | https://brandguard-frontend.vercel.app |
+| Backend API | Render | https://brandguard-api.onrender.com |
+| PostgreSQL | Render Postgres | internal connection string |
+
+Full deployment instructions: [docs/deployment.md](docs/deployment.md).
+
+---
+
+## 📌 Known limitations
+
+1. **Rich text** — MVP targets plain text and Markdown; full WYSIWYG (HTML tables, inline images) is on the roadmap.
+2. **File uploads** — binary parsing (.docx/.pdf) is planned for the next release.
+
+---
+
+<div align="center">
+
+Built with ❤️ by **8-Bit Avengers**
+
+</div>
