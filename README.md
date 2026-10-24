@@ -33,7 +33,7 @@ prohibited phrases, legal disclaimers, and verified product facts — before it 
 | 🧾 **Immutable revisions** | Every save is snapshotted with revision numbers and diffs. |
 | 📊 **Governance analytics** | Live KPIs: violations by category & severity, most-triggered rules, rules marked unclear. |
 | 🏢 **Multi-tenant workspaces** | Strict workspace scoping on every model and route — zero cross-tenant leakage. |
-| 🔐 **Email OTP sign-up** | Registration is verified via 6-digit email codes (Resend). |
+| 🔐 **Email OTP sign-up** | Registration is verified via 6-digit email codes (Brevo). |
 
 ---
 
@@ -64,7 +64,7 @@ The app is deployed end-to-end — no setup needed:
 
 **Backend** — Python 3.10+ · FastAPI · Uvicorn · Pydantic v2 · SQLAlchemy 2.0 · Alembic · Argon2id · python-jose (JWT) · Pytest
 
-**Infra** — PostgreSQL (Render) · Backend on Render · Frontend on Vercel · Resend (OTP email)
+**Infra** — PostgreSQL (Render) · Backend on Render · Frontend on Vercel · Brevo (OTP email)
 
 ---
 

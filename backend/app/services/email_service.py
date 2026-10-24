@@ -11,7 +11,7 @@ from app.core.config import settings
 
 logger = logging.getLogger("brandguard.email")
 
-# Dev/test outbox: when no RESEND_API_KEY is configured, sent emails
+# Dev/test outbox: when no email provider is configured, sent emails
 # (including OTP codes) are captured here so local dev and tests can
 # read them instead of requiring a real mailbox.
 outbox: list[dict] = []

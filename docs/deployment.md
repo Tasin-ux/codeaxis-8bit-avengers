@@ -34,6 +34,12 @@ CORS_ORIGINS=https://brandguard.example.com
 AI_PROVIDER=gemini # or openai / none
 AI_API_KEY=your-api-key-here
 AI_MODEL=gemini-2.0-flash
+
+# Email OTP delivery (Brevo API uses port 443 – works on Render free tier,
+# where outbound SMTP ports 25/465/587 are blocked)
+# Sender must be verified in Brevo (Senders & IP -> Senders -> verify email)
+EMAIL_FROM=BrandGuard <verified-sender@example.com>
+BREVO_API_KEY=your-brevo-api-key
 ```
 
 ---
