@@ -1,6 +1,7 @@
 """Database models package – import all models so Base.metadata is complete."""
 
 from app.models.user import User  # noqa: F401
+from app.models.otp import EmailOtp  # noqa: F401
 from app.models.workspace import Workspace, WorkspaceMembership  # noqa: F401
 from app.models.brand import Brand  # noqa: F401
 from app.models.guideline import BrandGuideline  # noqa: F401

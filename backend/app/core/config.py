@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     AI_MODEL: str = ""
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
     ENVIRONMENT: str = "development"
+    RESEND_API_KEY: str = ""
+    EMAIL_FROM: str = "BrandGuard <onboarding@resend.dev>"
+    OTP_EXPIRE_MINUTES: int = 10
+    OTP_MAX_ATTEMPTS: int = 5
+    OTP_RESEND_COOLDOWN_SECONDS: int = 60
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 

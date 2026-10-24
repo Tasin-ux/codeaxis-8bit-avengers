@@ -68,3 +68,60 @@ class TokenResponse(BaseModel):
 
 class TokenRefresh(BaseModel):
     refresh_token: str = Field(..., min_length=1)
+
+
+class RegisterResponse(BaseModel):
+    message: str
+    email: str
+
+
+class OtpVerifyRequest(BaseModel):
+    """Verify a registration OTP and activate the account."""
+
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6)
+
+    @field_validator("email")
+    @classmethod
+    def _normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class OtpRequest(BaseModel):
+    """Request/resend an OTP (register, forgot_password)."""
+
+    email: EmailStr
+
+    @field_validator("email")
+    @classmethod
+    def _normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class OtpPurposeRequest(BaseModel):
+    """Resend an OTP for an explicit purpose."""
+
+    email: EmailStr
+    purpose: str = Field(..., pattern="^(register|forgot_password)$")
+
+    @field_validator("email")
+    @classmethod
+    def _normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6)
+    password: str = Field(..., min_length=8, max_length=128)
+
+    @field_validator("email")
+    @classmethod
+    def _normalize_email(cls, v: str) -> str:
+        return v.strip().lower()
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(..., min_length=1)
+    code: str = Field(..., min_length=6, max_length=6)
+    password: str = Field(..., min_length=8, max_length=128)

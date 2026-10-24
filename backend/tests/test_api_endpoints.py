@@ -159,6 +159,23 @@ def test_cross_workspace_isolation(client_and_db):
     )
     assert reg_res.status_code == 201
 
+    # Verify OTP from the dev email outbox, then log in
+    from app.services import email_service
+
+    otp_msg = email_service.outbox[-1]
+    code = None
+    for line in otp_msg["text"].splitlines():
+        if "code is:" in line:
+            code = line.split("code is:")[1].strip()
+            break
+    assert code and len(code) == 6
+    verify_res = client.post(
+        "/api/v1/auth/verify-otp",
+        json={"email": "user2@brandguard.ai", "code": code},
+    )
+    assert verify_res.status_code == 200
+    assert "access_token" in verify_res.json()
+
     # Login as user 2
     login_res = client.post(
         "/api/v1/auth/login",
